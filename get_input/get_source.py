@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import os, time
+from os import path, stat
 import datetime
 from mimetypes import MimeTypes
 from pwd import getpwuid
-
+import textract
+#from unidecode import unidecode_expect_nonascii
+from unidecode import unidecode
 class GetText(object):
     def __init__(self, object):
         self.time_stamp = self.timestamp()
@@ -44,7 +49,18 @@ class GetText(object):
         self.file_owner = getpwuid(os.stat(self.abs_path).st_uid).pw_name
         self.file_extension = os.path.splitext(self.abs_path)[1]
         self.file_access = os.access(self.abs_path, os.R_OK)
+        self.read_file(source)
 
-
-
-
+    def read_file(self, source):
+        if self.file_access:
+            if self.file_type == \
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                self.raw_text = textract.process(source)
+            elif self.file_type == "text/plain":
+                self.raw_text = open(self.abs_path).read()
+            elif self.file_type == 'application/pdf':
+                self.raw_text = u''
+                self.raw_text = textract.process(source, method='pdftotext')
+                #self.raw_text = self.raw_text.replace("\n", " ")
+            else:
+                print "unknown filetype"
