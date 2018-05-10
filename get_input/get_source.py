@@ -61,6 +61,8 @@ class GetText(object):
             elif self.file_type == 'application/pdf':
                 self.raw_text = textract.process(source)
                 #self.raw_text_utf = self.raw_text.decode('utf-8', 'ignore')
+            elif self.file_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                self.raw_text = textract.process(source)
             else:
                 print "unknown filetype"
             if self.raw_text:
