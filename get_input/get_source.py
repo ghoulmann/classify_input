@@ -15,7 +15,7 @@ class GetText(object):
         self.classification = None
         self.full_text = None
         self.classification = self.type_determination(self.source)
-
+    
     def type_determination(self, source):
         if os.path.isfile(self.source):
             classification = "file"
@@ -59,8 +59,11 @@ class GetText(object):
             elif self.file_type == "text/plain":
                 self.raw_text = open(self.abs_path).read()
             elif self.file_type == 'application/pdf':
-                self.raw_text = u''
-                self.raw_text = textract.process(source, method='pdftotext')
-                #self.raw_text = self.raw_text.replace("\n", " ")
+                self.raw_text = textract.process(source)
+                #self.raw_text_utf = self.raw_text.decode('utf-8', 'ignore')
             else:
                 print "unknown filetype"
+            if self.raw_text:
+                self.clean_text = "".join(x for x in self.raw_text if 31 < ord(x) <127)
+    
+    
